@@ -58,7 +58,7 @@ var ACA_ResultsController = (function() {
                 data = {
                     date: parseInt(eventDate / 1000),
                     prettyDate: m.format('MM/DD'),
-                    month: m.format('M'),
+                    month: m.format('MMMM'),
                     year: m.format('YYYY'),
                     event: item.eventName || '',
                     category: self.acaCategory(item),
