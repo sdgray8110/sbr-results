@@ -13,6 +13,12 @@ router.post('/', function(req, res) {
   });
 });
 
+router.get('/:id', function(req, res) {
+  ResultsController.fetchRider(req.params.id, function(results) {
+    res.json(results);
+  });
+});
+
 router.get('/', function(req, res) {
   var riders = [
     {usac: 347366, id: 1},

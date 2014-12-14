@@ -4,7 +4,7 @@ var helpers = require('../helpers'),
 
 var ResultsController = (function() {
     var self = {
-        settings: {
+        options: {
             stripNonResults: true
         },
 
@@ -12,7 +12,7 @@ var ResultsController = (function() {
             var results = [],
                 len = riders.length;
 
-            self.options = helpers.extend(self.settings, options);
+            self.options = helpers.extend(self.options, options);
 
             riders.forEach(function(rider, i) {
                 self.fetchRider(rider.usac, function(riderResults) {
