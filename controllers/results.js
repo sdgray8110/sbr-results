@@ -76,7 +76,15 @@ var ResultsController = (function() {
         stripNonResults: function(results) {
             if (self.options.stripNonResults) {
                 var nonResult = ['dns','dnf', 'dnp', 'dq'],
-                    maxPlacing = 599
+                    maxPlacing = 599;
+                    
+                nonResult = nonResult.forEach(function(item) {
+                	var upper = item.toUpperCase();
+                
+                	if (nonResult.indexOf(upper) < 0) {
+                		nonResult.push(upper);
+                	}
+                });
 
                 results = results.filter(function(result) {
                     if (nonResult.indexOf(result.placing) < 0 && result.placing <= maxPlacing) {
