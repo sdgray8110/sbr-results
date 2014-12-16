@@ -19,17 +19,23 @@ var RiderDataController = (function() {
                     'TR': 'trackCategory',
                     'MTB': 'mtbCategory'
                 },
-                cats = Object.keys(map),
-                data = helpers.extend(acaData.data[0], usacData);
+                cats = Object.keys(map);
 
-            cats.forEach(function(cat) {
-                data[map[cat]] = data.credentials[cat];
-            });
 
-            delete(data.credentials);
-            delete(data.clubs);
+            if (acaData.data.length) {
+                var data = helpers.extend(acaData.data[0], usacData);
 
-            return data;
+                cats.forEach(function(cat) {
+                    data[map[cat]] = data.credentials[cat];
+                });
+
+                delete(data.credentials);
+                delete(data.clubs);
+
+                return data;
+            }
+
+            return usacData;
         }
     };
 
