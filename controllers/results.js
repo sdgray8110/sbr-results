@@ -78,7 +78,7 @@ var ResultsController = (function() {
                 var nonResult = ['dns','dnf', 'dnp', 'dq'],
                     maxPlacing = 599;
                     
-                nonResult = nonResult.forEach(function(item) {
+                nonResult.forEach(function(item) {
                 	var upper = item.toUpperCase();
                 
                 	if (nonResult.indexOf(upper) < 0) {
