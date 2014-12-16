@@ -49,7 +49,7 @@ var USAC_ResultsController = (function() {
                 age = text.match(/^\d+|\d+\b|\d+(?=\w)/g).map(function (v) {return +v;})[0];
 
             return {
-                age: age
+                racingAge: age
             };
         },
 
