@@ -8,6 +8,18 @@ var ACA_ResultsController = (function() {
             return 'http://coloradocycling.org/services/members/' + usacID + '/results';
         },
 
+        memberDataURL: function(usacID) {
+            return 'http://coloradocycling.org/services/members/' + usacID;
+        },
+
+        fetch_member_data: function(usacID, callback) {
+            var url = self.memberDataURL(usacID);
+
+            self.fetch(url, function(memberData) {
+                callback(memberData);
+            });
+        },
+
         fetch_results: function(usacID, callback) {
             var url = self.memberResultsURL(usacID);
 

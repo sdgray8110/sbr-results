@@ -10,6 +10,14 @@ var USAC_ResultsController = (function() {
             return 'http://www.usacycling.org/results/?compid=' + + usacID
         },
 
+        fetch_rider_age: function(usacID, callback) {
+            var url = self.memberResultsURL(usacID);
+
+            self.fetch(url, function(resultsPage) {
+                callback(self.parseAge(resultsPage));
+            });
+        },
+
         fetch_results: function(usacID, callback) {
             var url = self.memberResultsURL(usacID);
 
@@ -32,6 +40,17 @@ var USAC_ResultsController = (function() {
             }).on('error', function(e) {
                 console.log("Got error: ", e);
             });
+        },
+
+        parseAge: function(resultsPage) {
+            $ = cheerio.load(resultsPage);
+
+            var text = $('#filterform').find('table').eq(0).find('tr').eq(0).find('b').eq(1).text(),
+                age = text.match(/^\d+|\d+\b|\d+(?=\w)/g).map(function (v) {return +v;})[0];
+
+            return {
+                age: age
+            };
         },
 
         process_results: function(results) {

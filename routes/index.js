@@ -3,6 +3,7 @@ var router = express.Router();
 var ResultsController = require('../controllers/results');
 var ACA_ResultsController = require('../controllers/aca_results');
 var USAC_ResultsController = require('../controllers/usac_results');
+var RiderDataController = require('../controllers/rider_data');
 
 
 router.post('/', function(req, res) {
@@ -39,6 +40,12 @@ router.get('/aca', function(req, res) {
 router.get('/usac', function(req, res) {
   USAC_ResultsController.fetch_results(388671, function(results) {
     res.json(results);
+  });
+});
+
+router.get('/rider/:id', function(req, res) {
+  RiderDataController.get_rider(req.params.id, function(data) {
+    res.json(data);
   });
 });
 
