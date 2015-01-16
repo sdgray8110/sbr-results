@@ -5,11 +5,11 @@ var http = require('http'),
 var ACA_ResultsController = (function() {
     var self = {
         memberResultsURL: function(usacID) {
-            return 'http://coloradocycling.org/services/members/' + usacID + '/results';
+            return 'http://www.coloradocycling.org/services/members/' + usacID + '/results';
         },
 
         memberDataURL: function(usacID) {
-            return 'http://coloradocycling.org/services/members/' + usacID;
+            return 'http://www.coloradocycling.org/services/members/' + usacID;
         },
 
         fetch_member_data: function(usacID, callback) {
