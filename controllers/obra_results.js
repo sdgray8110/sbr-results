@@ -30,9 +30,7 @@ var OBRA_ResultsController = (function() {
             var url = self.memberInfoURL(firstname, lastname);
 
             self.fetch(url, function(rider) {
-                callback(rider);
-
-                //callback(self.process_results(results));
+                callback(self.process_rider(rider));
             });
         },
 
@@ -50,6 +48,10 @@ var OBRA_ResultsController = (function() {
             }).on('error', function(e) {
                 console.log("Got error: ", e);
             });
+        },
+
+        process_rider: function(riders) {
+            return riders.length ? riders[0] : {};
         },
 
         process_results: function(results) {
