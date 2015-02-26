@@ -62,4 +62,10 @@ router.get('/obra/results/:id/:year', function(req, res) {
   });
 });
 
+router.get('/obra/results-all/:id', function(req, res) {
+  OBRA_ResultsController.fetch_all_results(req.params.id, function(data) {
+    res.json(data);
+  });
+});
+
 module.exports = router;

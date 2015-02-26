@@ -1,6 +1,7 @@
 var http = require('http'),
     moment = require('moment'),
-    helpers = require('../helpers');
+    helpers = require('../helpers'),
+    minYear = 2006;
 
 var OBRA_ResultsController = (function() {
     var self = {
@@ -20,9 +21,24 @@ var OBRA_ResultsController = (function() {
             var url = self.memberResultsURL(obraID, year);
 
             self.fetch(url, function(results) {
-                callback(results);
+                callback(self.process_results(results));
+            });
+        },
 
-                //callback(self.process_results(results));
+        fetch_all_results: function(obraID, callback) {
+            var years = self.allYears(),
+                results = {};
+
+            years.forEach(function(year) {
+                var url = self.memberResultsURL(obraID, year);
+
+                self.fetch(url, function(res) {
+                    results[year] = self.process_results(res);
+
+                    if (Object.keys(results).length === years.length) {
+                        callback(results);
+                    }
+                });
             });
         },
 
@@ -50,45 +66,53 @@ var OBRA_ResultsController = (function() {
             });
         },
 
+        allYears: function() {
+            var curYear = parseInt(moment().format('YYYY')),
+                years = [];
+
+            while (curYear >= minYear) {
+                years.push(curYear);
+                curYear -= 1;
+            }
+
+            return years;
+        },
+
         process_rider: function(riders) {
             return riders.length ? riders[0] : {};
         },
 
         process_results: function(results) {
-            var eventIDs = [],
-                resultSetNames = [],
-                clean = [];
+            var races = []
 
-            results.data.forEach(function(item, i) {
-                var newEventID = eventIDs.indexOf(item.eventId) < 0,
-                    newResultSet = resultSetNames.indexOf(item.resultSetName) < 0;
+            results.forEach(function(result) {
+                result = self.result(result);
 
-                if (newEventID || (!newEventID && newResultSet)) {
-                    clean.push(self.result(item));
+                if (self.isValidPlacing(result.placing)) {
+                    races.push(result);
                 }
-
-                eventIDs.push(item.eventId);
-                resultSetNames.push(item.resultSetName);
             });
 
-            return clean;
+            races.sort(self.sort_desc);
+
+            return races;
         },
 
         result: function(item) {
-            var eventDate = self.acaDate(item.eventDate),
+            var eventDate = new Date(item.date),
                 m = moment(eventDate),
                 data = {
-                    date: parseInt(eventDate / 1000),
-                    prettyDate: m.format('MM/DD'),
+                    date: item.date,
+                    prettyDate: m.format('M/D/YYYY'),
                     month: m.format('MMMM'),
                     year: m.format('YYYY'),
-                    event: item.eventName || '',
-                    category: self.acaCategory(item),
-                    placing: parseInt(item.resultSetPlace),
+                    timestamp: parseInt((eventDate * 1) / 1000),
+                    event: item.race_full_name,
+                    category: self.categoryName(item),
+                    placing: parseInt(item.place),
                     prettyPlacing: self.prettyPlacing(item),
-                    name: self.riderName(item),
-                    id: item.eventId,
-                    resultsBy: 'aca'
+                    name: item.name,
+                    id: item.id
                 };
 
             self.setDiscipline(data);
@@ -96,37 +120,43 @@ var OBRA_ResultsController = (function() {
             return data;
         },
 
-        acaDate: function(dateStr) {
-            var arr = dateStr.split('-'),
-                formatted = arr[2] + '/' + arr[1] + '/' + arr[0];
-
-            return new Date(formatted);
+        isValidPlacing: function(placing) {
+            return placing && placing <= 200;
         },
 
-        acaCategory: function(item) {
-            var category = null,
-                keys = ['resultSetName', 'raceGroupName', 'category'];
+        categoryName: function(item) {
+            var category = '';
 
-            keys.some(function(key) {
-                if (item[key]) {
-                    category = item[key];
-
-                    return true;
-                }
-            });
+            if (item.race_name) {
+                category = item.race_name;
+            } else {
+                category = item.category_name;
+            }
 
             return category;
+        },
+
+        prettyPlacing: function(item) {
+            return helpers.ordinal_suffix_of(item.place);
+        },
+
+        sort_desc: function(a,b) {
+            if (a.timestamp > b.timestamp)
+                return -1;
+            if (a.timestamp < b.timestamp)
+                return 1;
+            return 0;
         },
 
         setDiscipline: function(data) {
             var discipline = '',
                 mappings = {
-                    'Road': ['road race', ' rr', 'circuit race', 'circuit-race', 'hillclimb', 'hill climb', 'hill-climb', 'road'],
-                    'TT': ['time trial', 'time-trial', ' tt'],
+                    'Road': ['road race', ' rr', 'circuit race', 'circuit-race', 'hillclimb', 'hill climb', 'hill-climb', 'road', 'thursday nighter', 'champion thursday'],
+                    'Time Trial': ['time trial', 'time-trial', ' tt'],
                     'Stage Race': ['stage race', 'omnium'],
-                    'Criterium': ['criterium', 'crit'],
+                    'Criterium': ['criterium', 'crit' ],
                     'MTB': ['mtb', 'xc', 'cross country', 'cross-country', 'downhill', 'enduro', 'short track', 'short-track'],
-                    'CX': ['cx', 'cyclocross', 'cyclo cross', 'cyclo-cross', 'cyclo x', 'cyclo-x', 'cross']
+                    'Cyclocross': ['cx', 'cyclocross', 'cyclo cross', 'cyclo-cross', 'cyclo x', 'cyclo-x', 'cross']
                 },
                 disciplines = Object.keys(mappings),
                 lcName = data.event.toLowerCase();
@@ -145,23 +175,6 @@ var OBRA_ResultsController = (function() {
 
             data.discipline = discipline;
             data.disciplineClassName = discipline.toLowerCase().replace(/ /g, '_');
-        },
-
-        prettyPlacing: function(item) {
-            return helpers.ordinal_suffix_of(item.resultSetPlace);
-        },
-
-        riderName: function(item) {
-            var name = [],
-                keys = ['firstName', 'lastName'];
-
-            keys.forEach(function(key) {
-                if (item[key]) {
-                    name.push(item[key]);
-                }
-            });
-
-            return name.join(' ');
         }
     };
 
