@@ -3,6 +3,7 @@ var router = express.Router();
 var ResultsController = require('../controllers/results');
 var ACA_ResultsController = require('../controllers/aca_results');
 var USAC_ResultsController = require('../controllers/usac_results');
+var OBRA_ResultsController = require('../controllers/obra_results');
 var RiderDataController = require('../controllers/rider_data');
 
 
@@ -45,6 +46,18 @@ router.get('/usac', function(req, res) {
 
 router.get('/rider/:id', function(req, res) {
   RiderDataController.get_rider(req.params.id, function(data) {
+    res.json(data);
+  });
+});
+
+router.get('/obra/rider/:firstname/:lastname', function(req, res) {
+  OBRA_ResultsController.fetch_rider(req.params.firstname, req.params.lastname, function(data) {
+    res.json(data);
+  });
+});
+
+router.get('/obra/results/:id/:year', function(req, res) {
+  OBRA_ResultsController.fetch_results(req.params.id, req.params.year, function(data) {
     res.json(data);
   });
 });
