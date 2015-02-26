@@ -115,6 +115,7 @@ var OBRA_ResultsController = (function() {
                     id: item.id
                 };
 
+            self.cleanEventName(data);
             self.setDiscipline(data);
 
             return data;
@@ -146,6 +147,10 @@ var OBRA_ResultsController = (function() {
             if (a.timestamp < b.timestamp)
                 return 1;
             return 0;
+        },
+
+        cleanEventName : function(data) {
+            data.event = data.event.replace(data.category, '').trim();
         },
 
         setDiscipline: function(data) {
