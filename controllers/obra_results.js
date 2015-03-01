@@ -1,4 +1,5 @@
 var http = require('http'),
+    cheerio = require('cheerio'),
     moment = require('moment'),
     helpers = require('../helpers'),
     minYear = 2006;
@@ -15,6 +16,10 @@ var OBRA_ResultsController = (function() {
             var params = [firstname.toLowerCase(), lastname.toLowerCase()].join('+');
 
             return 'http://obra.org/people.json?name=' + params;
+        },
+
+        memberInfoPageURL: function(obraId) {
+            return 'http://obra.org/people/' + obraId;
         },
 
         fetch_results: function(obraID, year, callback) {
@@ -50,6 +55,15 @@ var OBRA_ResultsController = (function() {
             });
         },
 
+
+        fetch_rider_info: function(obraId, callback) {
+            var url = self.memberInfoPageURL(obraId);
+
+            self.fetchHTML(url, function(rider) {
+                callback(self.process_rider_info(rider));
+            });
+        },
+
         fetch: function(url, callback) {
             http.get(url, function(res) {
                 var body = '';
@@ -60,6 +74,22 @@ var OBRA_ResultsController = (function() {
 
                 res.on('end', function() {
                     callback(JSON.parse(body))
+                });
+            }).on('error', function(e) {
+                console.log("Got error: ", e);
+            });
+        },
+
+        fetchHTML: function(url, callback) {
+            http.get(url, function(res) {
+                var body = '';
+
+                res.on('data', function(chunk) {
+                    body += chunk;
+                });
+
+                res.on('end', function() {
+                    callback(body);
                 });
             }).on('error', function(e) {
                 console.log("Got error: ", e);
@@ -80,6 +110,17 @@ var OBRA_ResultsController = (function() {
 
         process_rider: function(riders) {
             return riders.length ? riders[0] : {};
+        },
+
+        process_rider_info: function(rider) {
+            var $ = cheerio.load(rider),
+                data = {
+                    mtb_category: $('#person_mtb_category').text(),
+                    road_category: $('#person_road_category').text(),
+                    cross_category: $('#person_ccx_category').text()
+                };
+
+            return data;
         },
 
         process_results: function(results) {
