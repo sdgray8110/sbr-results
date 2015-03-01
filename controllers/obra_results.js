@@ -88,7 +88,7 @@ var OBRA_ResultsController = (function() {
             results.forEach(function(result) {
                 result = self.result(result);
 
-                if (self.isValidPlacing(result.placing)) {
+                if (self.isValidRace(result) && self.isValidPlacing(result.placing)) {
                     races.push(result);
                 }
             });
@@ -119,6 +119,21 @@ var OBRA_ResultsController = (function() {
             self.setDiscipline(data);
 
             return data;
+        },
+
+        isValidRace: function(result) {
+            var terms = ['BAR'],
+                valid = true;
+
+            terms.some(function(term) {
+                if (result.event.match(term)) {
+                    valid = false;
+
+                    return false;
+                }
+            });
+
+            return valid;
         },
 
         isValidPlacing: function(placing) {
