@@ -122,11 +122,11 @@ var OBRA_ResultsController = (function() {
         },
 
         isValidRace: function(result) {
-            var terms = ['BAR'],
+            var terms = ['BAR', 'Standings', 'Combined'],
                 valid = true;
 
             terms.some(function(term) {
-                if (result.event.match(term)) {
+                if (result.event.match(term) || result.category.match(term)) {
                     valid = false;
 
                     return false;
