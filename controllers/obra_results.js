@@ -115,6 +115,7 @@ var OBRA_ResultsController = (function() {
         process_rider_info: function(rider) {
             var $ = cheerio.load(rider),
                 data = {
+                    racing_age: $('#person_racing_age').text(),
                     mtb_category: $('#person_mtb_category').text(),
                     road_category: $('#person_road_category').text(),
                     cross_category: $('#person_ccx_category').text().toLowerCase()
