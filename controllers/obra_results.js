@@ -117,7 +117,7 @@ var OBRA_ResultsController = (function() {
                 data = {
                     mtb_category: $('#person_mtb_category').text(),
                     road_category: $('#person_road_category').text(),
-                    cross_category: $('#person_ccx_category').text()
+                    cross_category: $('#person_ccx_category').text().toLowerCase()
                 };
 
             return data;
