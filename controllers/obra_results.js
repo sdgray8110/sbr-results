@@ -164,7 +164,7 @@ var OBRA_ResultsController = (function() {
         },
 
         isValidRace: function(result) {
-            var terms = ['BAR', 'Standings', 'Combined'],
+            var terms = ['BAR', 'Standings', 'Combined', 'Ironman', 'ironman', 'IRONMAN'],
                 valid = true;
 
             terms.some(function(term) {
