@@ -26,7 +26,11 @@ var OBRA_ResultsController = (function() {
             var url = self.memberResultsURL(obraID, year);
 
             self.fetch(url, function(results) {
-                callback(self.process_results(results));
+                if (!results.error) {
+                    callback(self.process_results(results));
+                } else {
+                    callback(results);
+                }
             });
         },
 
@@ -38,7 +42,9 @@ var OBRA_ResultsController = (function() {
                 var url = self.memberResultsURL(obraID, year);
 
                 self.fetch(url, function(res) {
-                    results[year] = self.process_results(res);
+                    if (!results.error) {
+                        results[year] = self.process_results(res);
+                    }
 
                     if (Object.keys(results).length === years.length) {
                         callback(results);
@@ -73,6 +79,10 @@ var OBRA_ResultsController = (function() {
                 });
 
                 res.on('end', function() {
+                    if (res.statusCode == '404') {
+                        body = '{"error": "OBRA Rider 404"}'
+                    }
+
                     callback(JSON.parse(body))
                 });
             }).on('error', function(e) {
@@ -125,17 +135,19 @@ var OBRA_ResultsController = (function() {
         },
 
         process_results: function(results) {
-            var races = []
+            var races = [];
 
-            results.forEach(function(result) {
-                result = self.result(result);
+            if (!results.error) {
+                results.forEach(function(result) {
+                    result = self.result(result);
 
-                if (self.isValidRace(result) && self.isValidPlacing(result.placing)) {
-                    races.push(result);
-                }
-            });
+                    if (self.isValidRace(result) && self.isValidPlacing(result.placing)) {
+                        races.push(result);
+                    }
+                });
 
-            races.sort(self.sort_desc);
+                races.sort(self.sort_desc);
+            }
 
             return races;
         },
