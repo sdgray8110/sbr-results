@@ -50,6 +50,14 @@ router.get('/rider/:id', function(req, res) {
   });
 });
 
+
+router.get('/riders/:ids', function(req, res) {
+  RiderDataController.get_riders(req.params.ids, function(data) {
+    res.json(data);
+  });
+});
+
+// OBRA
 router.get('/obra/rider/:firstname/:lastname', function(req, res) {
   OBRA_ResultsController.fetch_rider(req.params.firstname, req.params.lastname, function(data) {
     res.json(data);
@@ -73,6 +81,5 @@ router.get('/obra/rider-info/:id', function(req, res) {
     res.json(data);
   });
 });
-
 
 module.exports = router;

@@ -12,6 +12,19 @@ var RiderDataController = (function() {
             });
         },
 
+        get_riders: function(id_list, callback) {
+            var data = [],
+                ids = id_list.split(',');
+
+            ids.forEach(function(id) {
+                self.get_rider(id, function(rider) {
+                    data.push(rider);
+                });
+            });
+
+            callback(data);
+        },
+
         process: function(acaData, usacData) {
             var map = {
                     'RD': 'roadCategory',
