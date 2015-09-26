@@ -74,4 +74,10 @@ router.get('/obra/rider-info/:id', function(req, res) {
   });
 });
 
+router.get('/favicon.ico', function(req, res) {
+  var img = fs.readFileSync('/public/favicon.ico');
+  res.writeHead(200, {'Content-Type': 'image/ico' });
+  res.end(img, 'binary');
+});
+
 module.exports = router;
