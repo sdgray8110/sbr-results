@@ -75,8 +75,8 @@ router.get('/obra/rider-info/:id', function(req, res) {
 });
 
 router.get('/favicon.ico', function(req, res) {
-  var img = fs.readFileSync('/public/favicon.ico');
-  res.writeHead(200, {'Content-Type': 'image/ico' });
+  var img = fs.readFileSync('/public/images/favicon.png');
+  res.writeHead(200, {'Content-Type': 'image/png' });
   res.end(img, 'binary');
 });
 
