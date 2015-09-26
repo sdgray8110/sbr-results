@@ -7,22 +7,29 @@ var RiderDataController = (function() {
         get_rider: function(usacID, callback) {
             ACA_ResultsController.fetch_member_data(usacID, function(acaData) {
                 USAC_ResultsController.fetch_rider_age(usacID, function(usacData) {
-                    callback(self.process(acaData, usacData));
+                    var processed = self.process(acaData, usacData);
+
+                    callback(processed);
                 });
             });
         },
 
         get_riders: function(id_list, callback) {
-            var data = [],
-                ids = id_list.split(',');
+            var ids = id_list.split(','),
+                len = ids.length,
+                riders = [],
+                processedCt = 0;
 
-            ids.forEach(function(id) {
+            ids.forEach(function(id, i) {
                 self.get_rider(id, function(rider) {
-                    data.push(rider);
+                    riders.push(rider);
+                    processedCt += 1;
+
+                    if (processedCt === len) {
+                        callback(riders);
+                    }
                 });
             });
-
-            callback(data);
         },
 
         process: function(acaData, usacData) {
