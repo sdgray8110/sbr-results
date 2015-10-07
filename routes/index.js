@@ -22,12 +22,13 @@ router.get('/:id', function(req, res) {
 });
 
 router.get('/', function(req, res) {
-  var riders = [
-    {usac: 347366, id: 1},
-    {usac: 388671, id: 2}
-  ];
+  ResultsController.getCombinedResults(req, function(results) {
+    res.json(results);
+  });
+});
 
-  ResultsController.getCombinedResults(riders, function(results) {
+router.get('/rider_results/:riders', function(req, res) {
+  ResultsController.getCombinedResults(req, function(results) {
     res.json(results);
   });
 });

@@ -8,8 +8,9 @@ var ResultsController = (function() {
             stripNonResults: true
         },
 
-        getCombinedResults: function(riders, callback, options) {
+        getCombinedResults: function(req, callback, options) {
             var results = [],
+                riders = self.getRiders(req),
                 len = riders.length;
 
             self.options = helpers.extend(self.options, options);
@@ -26,6 +27,31 @@ var ResultsController = (function() {
                     }
                 });
             });
+
+        },
+
+        getRiders: function(req) {
+            var defaultRiders = [
+                    {usac: 347366, id: 1},
+                    {usac: 388671, id: 2}
+                ],
+                riders = req.params.riders ? self.get_riders_from_params(req.params.riders) :  defaultRiders;
+
+            return riders;
+        },
+
+        get_riders_from_params: function(riderList) {
+            var list = riderList.split(',');
+
+            list.forEach(function(rider, i) {
+                var item = rider.split('|');
+
+                list[i] = {
+                    usac: item[0], id: item[1]
+                };
+            });
+
+            return list;
         },
 
         fetchRider: function(usacId, callback) {

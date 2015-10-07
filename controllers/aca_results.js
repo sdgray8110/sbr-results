@@ -37,7 +37,9 @@ var ACA_ResultsController = (function() {
                 });
 
                 res.on('end', function() {
-                    callback(JSON.parse(body))
+                    var res = helpers.validJson(body) ? JSON.parse(body) : [];
+
+                    callback(res);
                 });
             }).on('error', function(e) {
                 console.log("Got error: ", e);
