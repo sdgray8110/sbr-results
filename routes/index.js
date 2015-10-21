@@ -84,13 +84,11 @@ router.get('/obra/rider-info/:id', function(req, res) {
   });
 });
 
- router.get('/usacs', function(req, res) {
-   var data = {
-     'foo': 'moo'
-   };
-
-   res.json(data);
- });
+router.get('saved_results', function(req, res) {
+  CompositeResultsController.getSavedResults(function(data) {
+    res.json(data);
+  });
+});
 
 router.post('/save_riders/', function(req, res) {
   CompositeResultsController.save_rider_list(req.body.riders, function(data) {
