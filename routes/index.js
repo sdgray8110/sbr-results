@@ -1,10 +1,11 @@
-var express = require('express');
+ var express = require('express');
 var router = express.Router();
 var ResultsController = require('../controllers/results');
 var ACA_ResultsController = require('../controllers/aca_results');
 var USAC_ResultsController = require('../controllers/usac_results');
 var OBRA_ResultsController = require('../controllers/obra_results');
 var RiderDataController = require('../controllers/rider_data');
+var CompositeResultsController = require('../controllers/composite_results');
 
 
 router.post('/', function(req, res) {
@@ -79,6 +80,20 @@ router.get('/obra/results-all/:id', function(req, res) {
 
 router.get('/obra/rider-info/:id', function(req, res) {
   OBRA_ResultsController.fetch_rider_info(req.params.id, function(data) {
+    res.json(data);
+  });
+});
+
+ router.get('/usacs', function(req, res) {
+   var data = {
+     'foo': 'moo'
+   };
+
+   res.json(data);
+ });
+
+router.post('/save_riders/', function(req, res) {
+  CompositeResultsController.save_rider_list(req.body.riders, function(data) {
     res.json(data);
   });
 });
