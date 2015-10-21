@@ -72,9 +72,7 @@ var CompositeResultsController = (function() {
                 fs.readFile(resultsFile, function (err, data) {
                     if (err) throw err;
 
-                    callback({'foo': 'moo'});
-
-                    //callback(JSON.parse(data));
+                    callback(JSON.parse(data));
                 });
             }
         };

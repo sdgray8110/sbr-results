@@ -84,7 +84,7 @@ router.get('/obra/rider-info/:id', function(req, res) {
   });
 });
 
-router.get('saved_results', function(req, res) {
+router.get('/saved_results', function(req, res) {
   CompositeResultsController.getSavedResults(function(data) {
     res.json(data);
   });
