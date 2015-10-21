@@ -15,7 +15,7 @@ router.post('/', function(req, res) {
   });
 });
 
-router.get('/:id', function(req, res) {
+router.get('/:id(\\d+)/', function(req, res) {
   ResultsController.fetchRider(req.params.id, function(results) {
     res.json(results);
   });
