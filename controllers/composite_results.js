@@ -30,7 +30,7 @@ var CompositeResultsController = (function() {
                     self.get_saved_rider_list(function(data) {
                         riderList = data;
 
-                        self.fetchResults(riderList);
+                        self.fetchResults(riderList);c
                     });
                 }
 
@@ -46,21 +46,24 @@ var CompositeResultsController = (function() {
 
             fetchResults: function(riderList) {
                 var compositeResults = [],
-                    len = riderList.length;
+                    len = riderList.length,
+                    processed = 0;
 
                 riderList.forEach(function(rider, i) {
                     if (i <= len) {
                         ResultsController.fetchRider(rider.usac, function(results) {
                             var result = {
+                                riderName: rider.riderName,
                                 usac: rider.usac,
                                 id: rider.id,
-                                results: results
+                                data: results
                             };
                             compositeResults.push(result);
+                            processed += 1;
 
-                            console.log(i, len);
+                            console.log(i, len, processed);
 
-                            if ((i + 1) === len) {
+                            if ((processed + 1) === len) {
                                 self.save_results_to_file(compositeResults);
                             }
                         });
