@@ -1,5 +1,5 @@
-var fs = fs = require('fs'),
-    path = require('path'),
+var http = require('http'),
+    fs = fs = require('fs'),
     riderLisatFile = 'public/data/rdiers.json',
     resultsFile = 'public/data/results.json',
     ResultsController = require('../controllers/results'),
