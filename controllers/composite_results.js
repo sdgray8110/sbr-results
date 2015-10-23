@@ -2,7 +2,8 @@ var fs = fs = require('fs'),
     path = require('path'),
     riderLisatFile = 'public/data/rdiers.json',
     resultsFile = 'public/data/results.json',
-    ResultsController = require('../controllers/results');
+    ResultsController = require('../controllers/results'),
+    cronurl = 'http://www.sonicboomracing.com/wp-content/themes/sbr/cron/fetch_saved_results.php';
 
 var CompositeResultsController = (function() {
     var self = {
@@ -65,6 +66,7 @@ var CompositeResultsController = (function() {
 
                             if ((processed + 1) === len) {
                                 self.save_results_to_file(compositeResults);
+                                self.triggerFetchResults();
                             }
                         });
                     }
@@ -76,6 +78,24 @@ var CompositeResultsController = (function() {
                     if (err) throw err;
 
                     callback(JSON.parse(data));
+                });
+            },
+
+            triggerFetchResults: function() {
+                http.get(cronurl, function(res) {
+                    var body = '';
+
+                    res.on('data', function(chunk) {
+                        body += chunk;
+                    });
+
+                    res.on('end', function() {
+                        if (res.statusCode == '404') {
+                            body = '{"error": "trigger fetch results 404"}';
+                        }
+                    });
+                }).on('error', function(e) {
+                    console.log("Got error: ", e);
                 });
             }
         };
