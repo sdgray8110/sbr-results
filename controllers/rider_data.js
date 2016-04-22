@@ -41,8 +41,7 @@ var RiderDataController = (function() {
                 },
                 cats = Object.keys(map);
 
-
-            if (acaData.data.length) {
+            if (Array.isArray(acaData.data) && acaData.data.length) {
                 var data = helpers.extend(acaData.data[0], usacData);
 
                 cats.forEach(function(cat) {

@@ -1,15 +1,15 @@
-var http = require('http'),
+var http = require('https'),
     moment = require('moment'),
     helpers = require('../helpers');
 
 var ACA_ResultsController = (function() {
     var self = {
         memberResultsURL: function(usacID) {
-            return 'http://www.coloradocycling.org/services/members/' + usacID + '/results';
+            return 'https://www.coloradocycling.org/services/members/' + usacID + '/results';
         },
 
         memberDataURL: function(usacID) {
-            return 'http://www.coloradocycling.org/services/members/' + usacID;
+            return 'https://www.coloradocycling.org/services/members/' + usacID;
         },
 
         fetch_member_data: function(usacID, callback) {
