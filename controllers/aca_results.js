@@ -51,17 +51,20 @@ var ACA_ResultsController = (function() {
                 resultSetNames = [],
                 clean = [];
 
-            results.data.forEach(function(item, i) {
-                var newEventID = eventIDs.indexOf(item.eventId) < 0,
-                    newResultSet = resultSetNames.indexOf(item.resultSetName) < 0;
+            if (Array.isArray(results.data)) {
+                results.data.forEach(function(item, i) {
+                    var newEventID = eventIDs.indexOf(item.eventId) < 0,
+                        newResultSet = resultSetNames.indexOf(item.resultSetName) < 0;
 
-                if (newEventID || (!newEventID && newResultSet)) {
-                    clean.push(self.result(item));
-                }
+                    if (newEventID || (!newEventID && newResultSet)) {
+                        clean.push(self.result(item));
+                    }
 
-                eventIDs.push(item.eventId);
-                resultSetNames.push(item.resultSetName);
-            });
+                    eventIDs.push(item.eventId);
+                    resultSetNames.push(item.resultSetName);
+                });
+
+            }
 
             return clean;
         },
