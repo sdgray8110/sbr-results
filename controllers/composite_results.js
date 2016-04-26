@@ -73,6 +73,61 @@ var CompositeResultsController = (function() {
                 });
             },
 
+            saveYearlyCombinedResults: function(riderList, callback) {
+                    var years = {};
+
+                riderList.forEach(function (rider) {
+                    rider.data.forEach(function(race) {
+                        self.singleYearData(years, race);
+                    });
+                });
+
+                callback(years);
+            },
+
+
+            singleYearData: function (years, race) {
+                if (years[race.year]) {
+                    years[race.year].races.push(race);
+                    years[race.year].stats = self.yearlyStats(years[race.year], race)
+
+                } else {
+                    years[race.year] = {
+                        stats: self.yearlyStats({}, race),
+                        races: [race]
+                    };
+
+                    years[race.year].months = {};
+                    years[race.year].months[race.month] = [];
+                }
+                
+                if (!years[race.year].months[race.month]) {
+                    years[race.year].months = {};
+                    years[race.year].months[race.month] = [];
+                }
+                years[race.year].months[race.month].push(race);
+            },
+
+            yearlyStats: function (year, race ) {
+                var stats = year.stats || {
+                    starts: 0,
+                    podiums: 0,
+                    wins: 0
+                };
+
+                stats.starts += 1;
+
+                if(race.placing <= 3) {
+                    stats.podiums += 1;
+                }
+
+                if(race.placing === 1) {
+                    stats.wins += 1;
+                }
+
+                return stats;
+            },
+
             getSavedResults: function(callback) {
                 fs.readFile(resultsFile, function (err, data) {
                     if (err) throw err;

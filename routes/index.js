@@ -95,5 +95,15 @@ router.post('/save_riders/', function(req, res) {
     res.json(data);
   });
 });
+ 
+ router.get('/team_results', function(req, res) {
+   CompositeResultsController.getSavedResults(function(riderList) {
+     CompositeResultsController.saveYearlyCombinedResults(riderList, function(data) {
+       res.json(data);
+     });
+   });
+ }); 
+
+ 
 
 module.exports = router;
